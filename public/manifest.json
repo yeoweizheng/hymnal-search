@@ -1,6 +1,6 @@
 {
-  "short_name": "Hymnal (by number)",
-  "name": "Hymnal (by number)",
+  "short_name": "Hymnal",
+  "name": "Hymnal",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#21257f",
