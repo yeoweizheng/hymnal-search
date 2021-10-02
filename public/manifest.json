@@ -1,0 +1,8 @@
+{
+  "short_name": "Hymnal (by number)",
+  "name": "Hymnal (by number)",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#21257f",
+  "background_color": "#ffffff"
+}

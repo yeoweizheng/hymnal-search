@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { CssBaseline, Container, Card, Box, Grid, AppBar, Toolbar, IconButton, Typography, ToggleButton, ToggleButtonGroup, TextField } from "@mui/material";
+import { CssBaseline, Container, Card, Stack, Button, Grid, AppBar, Toolbar, Typography, ToggleButton, ToggleButtonGroup, TextField } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import axios from "axios";
 
 const baseUrl = "https://www.hymnal.net/en/hymn/";
 
@@ -31,22 +30,14 @@ function LanguageToggleButtonGroup({onLanguageChange}){
             exclusive
             onChange={handleChange}
         >
-            <ToggleButton value="h">English</ToggleButton>
-            <ToggleButton value="ch">大本</ToggleButton>
-            <ToggleButton value="ts">补充本</ToggleButton>
+            <ToggleButton color="primary" value="h">English</ToggleButton>
+            <ToggleButton color="primary" value="ch-t">大本(繁)</ToggleButton>
+            <ToggleButton color="primary" value="ts-t">補充本(繁)</ToggleButton>
+            <ToggleButton color="primary" value="ch-s">大本(简)</ToggleButton>
+            <ToggleButton color="primary" value="ts-s">补充本(简)</ToggleButton>
+            <ToggleButton color="primary" value="ns">New Songs</ToggleButton>
+            <ToggleButton color="primary" value="c">Children</ToggleButton>
         </ToggleButtonGroup>
-    )
-}
-
-function HymnSearchBar({onSearchInput}) {
-    return(
-        <TextField fullWidth label="Search hymn number" variant="outlined" type="number" onChange={onSearchInput}></TextField>
-    )
-}
-
-function SearchResult({text}) {
-    return (
-        <h1>{text}</h1>
     )
 }
 
@@ -54,9 +45,9 @@ function TopAppBar() {
     return (
         <Card>
             <AppBar position="static">
-                <Toolbar sx={{alignItems: "center"}}>
+                <Toolbar>
                     <Typography variant="h6" color="inherit" component="div">
-                        Hymn Search
+                        Hymnal (by number)
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -67,37 +58,45 @@ function TopAppBar() {
 function MainContainer() {
     const [language, setLanguage] = React.useState("h");
     const [searchInput, setSearchInput] = React.useState();
-    const [text, setText] = React.useState();
+    const textField = React.useRef(null);
     const handleLanguageChange = (newLanguage) => {
         setLanguage(newLanguage);
     }
     const handleSearchInput = (event) => {
         setSearchInput(event.target.value);
     }
+    const handleKeyDown = (event) => {
+        if (event.keyCode === 13) handleClick();
+    }
     const getUrl = () => {
-        return baseUrl + language + "/" + searchInput;
+        let queryParam = "";
+        let searchLang;
+        if (language.includes("-")) {
+            searchLang = language.split("-")[0];
+            let chineseType = language.split("-")[1];
+            if (chineseType === "s") queryParam = "?gb=1";
+        } else {
+            searchLang = language;
+        }
+        let url = baseUrl + searchLang + "/" + searchInput + queryParam;
+        return url;
     }
-    const performRequest = () => {
-        axios.get(getUrl(), {
-            headers: {
-                'Access-Control-Allow-Origin': '*'
-            }
-        }).then((response) => {
-            setText(response.data);
-        });
+    const handleClick = () => {
+        window.open(getUrl());
+        setSearchInput("");
     }
-    React.useEffect(() => {
-        performRequest();
-    })
     return (
         <Card>
             <Grid container>
-                <Grid item lg={2}>
+                <Grid item xs={4}>
                     <LanguageToggleButtonGroup onLanguageChange={handleLanguageChange} />
                 </Grid>
-                <Grid item lg={10}>
-                    <HymnSearchBar onSearchInput={handleSearchInput} />
-                    <SearchResult text={text}/>
+                <Grid item xs={8}>
+                    <Stack spacing={2} sx={{mt: 2}}>
+                        <TextField ref={textField} label="Enter hymn number" variant="outlined" type="number" value={searchInput} onChange={handleSearchInput} onKeyDown={handleKeyDown}></TextField>
+                        <Button variant="contained" size="large" onClick={handleClick}>Go</Button>
+                        <center><small>Powered by <a href="https://www.hymnal.net/" target="_blank" rel="noreferrer">https://www.hymnal.net/</a></small></center>
+                    </Stack>
                 </Grid>
             </Grid>
         </Card>
@@ -110,7 +109,7 @@ class MainApp extends React.Component {
             <React.Fragment>
                 <CssBaseline />
                 <ThemeProvider theme={theme}>
-                    <Container maxWidth="lg">
+                    <Container maxWidth="md" sx={{p:0}}>
                         <TopAppBar />
                         <MainContainer />
                     </Container>
