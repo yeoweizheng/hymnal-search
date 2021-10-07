@@ -65,7 +65,6 @@ function MainContainer() {
     const [textFieldLabel, setTextFieldLabel] = React.useState("Enter hymn number")
     const [textFieldType, setTextFieldType] = React.useState("number");
     const [searchInput, setSearchInput] = React.useState("");
-    const textField = React.useRef(null);
     const handleLanguageChange = (newLanguage) => {
         if (newLanguage === "search") {
             setTopAppBarText("Hymnal (search)");
@@ -115,7 +114,7 @@ function MainContainer() {
                     </Grid>
                     <Grid item xs={8}>
                         <Stack spacing={2} sx={{mt: 2}}>
-                            <TextField ref={textField} label={textFieldLabel} variant="outlined" type={textFieldType} value={searchInput} onChange={handleSearchInput} onKeyDown={handleKeyDown}></TextField>
+                            <TextField label={textFieldLabel} variant="outlined" type={textFieldType} value={searchInput} onChange={handleSearchInput} onKeyDown={handleKeyDown}></TextField>
                             <Button variant="contained" size="large" onClick={handleClick}>Go</Button>
                             <center><small>Powered by <a href="https://www.hymnal.net/" target="_blank" rel="noreferrer">https://www.hymnal.net/</a></small></center>
                         </Stack>
@@ -126,17 +125,15 @@ function MainContainer() {
     )
 }
 
-class MainApp extends React.Component {
-    render() {
-        return (
-            <React.Fragment>
-                <CssBaseline />
-                <ThemeProvider theme={theme}>
-                    <MainContainer />
-                </ThemeProvider>
-            </React.Fragment>
-        )
-    }
+function MainApp() {
+    return (
+        <React.Fragment>
+            <CssBaseline />
+            <ThemeProvider theme={theme}>
+                <MainContainer />
+            </ThemeProvider>
+        </React.Fragment>
+    )
 }
 
 ReactDOM.render(
